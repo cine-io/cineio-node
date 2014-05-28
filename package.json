@@ -1,0 +1,26 @@
+{
+  "author": "cine.io team",
+  "name": "cineio-node",
+  "domains": [
+    "cine.io"
+  ],
+  "version": "0.0.1",
+  "description": "official node package for cine.io",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": "https://github.com/cine-io/cineio-node",
+  "dependencies": {
+    "request": "^2.36.0"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "mocha": "^1.19.0",
+    "nock": "^0.32.2",
+    "sinon": "^1.10.0"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "0.10.x"
+  }
+}

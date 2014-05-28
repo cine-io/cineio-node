@@ -1,0 +1,5 @@
+--require chai
+--reporter spec
+--require test/test_helper.js
+--recursive
+--ui bdd
