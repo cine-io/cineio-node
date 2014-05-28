@@ -7,13 +7,13 @@ var
 describe('CineIO', function(){
 
   it('initializes', function(){
-    cine = CineIO.init({apiKey: 'my key', apiSecret: 'my secret'})
-    expect(cine.config).to.deep.equal({apiKey: 'my key', apiSecret: 'my secret'})
+    cine = CineIO.init({publicKey: 'my key', secretKey: 'my secret'})
+    expect(cine.config).to.deep.equal({publicKey: 'my key', secretKey: 'my secret'})
   });
 
   describe('projects', function(){
     beforeEach(function(){
-      this.cine = CineIO.init({apiKey: 'my key', apiSecret: 'MY SECRET'})
+      this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
     });
     describe('get', function(){
 
@@ -25,8 +25,8 @@ describe('CineIO', function(){
         var self = this;
         self.cine.projects.get('THE PROJECT ID', function(err, project){
           expect(project.id).to.equal("THE PROJECT ID")
-          expect(project.apiKey).to.equal("THE PROJECT API KEY")
-          expect(project.apiSecret).to.equal("THE PROJECT API SECRET")
+          expect(project.publicKey).to.equal("THE PROJECT PUBLIC KEY")
+          expect(project.secretKey).to.equal("THE PROJECT SECRET KEY")
           expect(project.name).to.equal("THE PROJECT NAME")
           expect(project.plan).to.equal("THE PROJECT PLAN")
           expect(project.streamsCount).to.equal(10)
@@ -40,7 +40,7 @@ describe('CineIO', function(){
 
   describe('streams', function(){
     beforeEach(function(){
-      this.cine = CineIO.init({apiKey: 'my key', apiSecret: 'MY SECRET'})
+      this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
     });
     describe('get', function(){
       beforeEach(function(){

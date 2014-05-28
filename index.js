@@ -24,7 +24,7 @@ Projects = (function() {
     var params, url;
     params = serialize({
       id: id,
-      apiSecret: this.config.apiSecret
+      secretKey: this.config.secretKey
     });
     url = "" + BASE_URL + "/project?" + params;
     return request.get(url, function(err, response) {
@@ -52,7 +52,7 @@ Streams = (function() {
   Streams.prototype.create = function(callback) {
     var params;
     params = serialize({
-      apiSecret: this.config.apiSecret
+      secretKey: this.config.secretKey
     });
     return request.post("" + BASE_URL + "/stream?" + params, function(err, response) {
       var stream;
@@ -71,7 +71,7 @@ Streams = (function() {
     var params, url;
     params = serialize({
       id: id,
-      apiSecret: this.config.apiSecret
+      secretKey: this.config.secretKey
     });
     url = "" + BASE_URL + "/stream?" + params;
     return request.get(url, function(err, response) {

@@ -16,5 +16,5 @@ response = {
 };
 
 module.exports = function() {
-  return nock('https://www.cine.io:443').get('/api/1/-/stream?id=THE%20STREAM%20ID&apiSecret=MY%20SECRET').reply(200, JSON.stringify(response));
+  return nock('https://www.cine.io:443').get('/api/1/-/stream?id=THE%20STREAM%20ID&secretKey=MY%20SECRET').reply(200, JSON.stringify(response));
 };
