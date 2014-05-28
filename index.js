@@ -1,8 +1,10 @@
-var BASE_URL, CineIO, Projects, Streams, request, serialize;
+var API_VERSION, BASE_URL, CineIO, Projects, Streams, request, serialize;
 
 request = require('request');
 
-BASE_URL = 'https://www.cine.io/api/1/-';
+API_VERSION = 1;
+
+BASE_URL = "https://www.cine.io/api/" + API_VERSION + "/-";
 
 serialize = function(obj) {
   var p, str;
