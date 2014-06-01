@@ -1,4 +1,4 @@
-var API_VERSION, BASE_URL, CineIO, Projects, Streams, request, serialize;
+var API_VERSION, BASE_URL, CineIO, ProjectsHandler, StreamsHandler, request, serialize;
 
 request = require('request');
 
@@ -17,12 +17,12 @@ serialize = function(obj) {
   return str.join("&");
 };
 
-Projects = (function() {
-  function Projects(config) {
+ProjectsHandler = (function() {
+  function ProjectsHandler(config) {
     this.config = config;
   }
 
-  Projects.prototype.get = function(callback) {
+  ProjectsHandler.prototype.get = function(callback) {
     var params, url;
     params = serialize({
       secretKey: this.config.secretKey
@@ -41,16 +41,16 @@ Projects = (function() {
     });
   };
 
-  return Projects;
+  return ProjectsHandler;
 
 })();
 
-Streams = (function() {
-  function Streams(config) {
+StreamsHandler = (function() {
+  function StreamsHandler(config) {
     this.config = config;
   }
 
-  Streams.prototype.create = function(callback) {
+  StreamsHandler.prototype.create = function(callback) {
     var params;
     params = serialize({
       secretKey: this.config.secretKey
@@ -68,7 +68,7 @@ Streams = (function() {
     });
   };
 
-  Streams.prototype.get = function(id, callback) {
+  StreamsHandler.prototype.get = function(id, callback) {
     var params, url;
     params = serialize({
       id: id,
@@ -88,15 +88,34 @@ Streams = (function() {
     });
   };
 
-  return Streams;
+  StreamsHandler.prototype.index = function(callback) {
+    var params, url;
+    params = serialize({
+      secretKey: this.config.secretKey
+    });
+    url = "" + BASE_URL + "/streams?" + params;
+    return request.get(url, function(err, response) {
+      var streams;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      streams = JSON.parse(response.body);
+      return callback(null, streams);
+    });
+  };
+
+  return StreamsHandler;
 
 })();
 
 CineIO = (function() {
   function CineIO(config) {
     this.config = config;
-    this.projects = new Projects(this.config);
-    this.streams = new Streams(this.config);
+    this.project = new ProjectsHandler(this.config);
+    this.streams = new StreamsHandler(this.config);
   }
 
   return CineIO;

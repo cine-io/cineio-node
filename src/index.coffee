@@ -9,7 +9,7 @@ serialize = (obj) ->
     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p])) if obj.hasOwnProperty(p)
   str.join "&"
 
-class Projects
+class ProjectsHandler
   constructor: (@config)->
   get: (callback)->
     params = serialize(secretKey: @config.secretKey)
@@ -20,7 +20,7 @@ class Projects
       stream = JSON.parse(response.body)
       callback(null, stream)
 
-class Streams
+class StreamsHandler
   constructor: (@config)->
   # callback(err, stream)
   create: (callback)->
@@ -41,10 +41,19 @@ class Streams
       stream = JSON.parse(response.body)
       callback(null, stream)
 
+  index: (callback)->
+    params = serialize(secretKey: @config.secretKey)
+    url = "#{BASE_URL}/streams?#{params}"
+    request.get url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      streams = JSON.parse(response.body)
+      callback(null, streams)
+
 class CineIO
   constructor: (@config)->
-    @projects = new Projects(@config)
-    @streams = new Streams(@config)
+    @project = new ProjectsHandler(@config)
+    @streams = new StreamsHandler(@config)
 
 exports.init = (config)->
   new CineIO(config)

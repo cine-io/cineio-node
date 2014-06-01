@@ -11,7 +11,7 @@ describe('CineIO', function(){
     expect(cine.config).to.deep.equal({publicKey: 'my key', secretKey: 'my secret'})
   });
 
-  describe('projects', function(){
+  describe('project', function(){
     beforeEach(function(){
       this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
     });
@@ -21,9 +21,9 @@ describe('CineIO', function(){
         this.stub = requireFixture('get_project')
       });
 
-      it('fetches a project', function(done){
+      it('fetches the project', function(done){
         var self = this;
-        self.cine.projects.get(function(err, project){
+        self.cine.project.get(function(err, project){
           expect(project.id).to.equal("THE PROJECT ID")
           expect(project.publicKey).to.equal("THE PROJECT PUBLIC KEY")
           expect(project.secretKey).to.equal("THE PROJECT SECRET KEY")
@@ -41,6 +41,29 @@ describe('CineIO', function(){
   describe('streams', function(){
     beforeEach(function(){
       this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
+    });
+    describe('index', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('get_streams')
+      });
+
+      it('gets the streams', function(done){
+        var self = this;
+        self.cine.streams.index(function(err, streams){
+          expect(streams).to.have.length(1)
+          var stream = streams[0]
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.name).to.equal("the stream name")
+          expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
+          expect(stream.password).to.equal("the stream password")
+          expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
+          expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
     });
     describe('get', function(){
       beforeEach(function(){
