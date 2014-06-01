@@ -5,7 +5,7 @@
     "cine.io"
   ],
   "version": "0.0.1",
-  "description": "official node package for cine.io",
+  "description": "node package for cine.io",
   "scripts": {
     "test": "mocha"
   },
