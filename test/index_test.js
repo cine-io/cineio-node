@@ -23,7 +23,7 @@ describe('CineIO', function(){
 
       it('fetches a project', function(done){
         var self = this;
-        self.cine.projects.get('THE PROJECT ID', function(err, project){
+        self.cine.projects.get(function(err, project){
           expect(project.id).to.equal("THE PROJECT ID")
           expect(project.publicKey).to.equal("THE PROJECT PUBLIC KEY")
           expect(project.secretKey).to.equal("THE PROJECT SECRET KEY")

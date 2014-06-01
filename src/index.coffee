@@ -11,8 +11,8 @@ serialize = (obj) ->
 
 class Projects
   constructor: (@config)->
-  get: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey)
+  get: (callback)->
+    params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
     request.get url, (err, response)->
       return callback(err) if err

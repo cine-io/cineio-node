@@ -10,5 +10,5 @@ response = {
 };
 
 module.exports = function() {
-  return nock('https://www.cine.io:443').get('/api/1/-/project?id=THE%20PROJECT%20ID&secretKey=MY%20SECRET').reply(200, JSON.stringify(response));
+  return nock('https://www.cine.io:443').get('/api/1/-/project?secretKey=MY%20SECRET').reply(200, JSON.stringify(response));
 };

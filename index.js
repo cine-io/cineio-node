@@ -22,10 +22,9 @@ Projects = (function() {
     this.config = config;
   }
 
-  Projects.prototype.get = function(id, callback) {
+  Projects.prototype.get = function(callback) {
     var params, url;
     params = serialize({
-      id: id,
       secretKey: this.config.secretKey
     });
     url = "" + BASE_URL + "/project?" + params;
