@@ -88,6 +88,26 @@ StreamsHandler = (function() {
     });
   };
 
+  StreamsHandler.prototype.fmleProfile = function(id, callback) {
+    var params, url;
+    params = serialize({
+      id: id,
+      secretKey: this.config.secretKey,
+      fmleProfile: true
+    });
+    url = "" + BASE_URL + "/stream?" + params;
+    return request.get(url, function(err, response) {
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      response = JSON.parse(response.body);
+      return callback(null, response.content);
+    });
+  };
+
   StreamsHandler.prototype.index = function(callback) {
     var params, url;
     params = serialize({

@@ -34,22 +34,29 @@ client.project.get(function(err, project){});
 To get all your streams:
 
 ```javascript
-streams = client.streams.index(function(err, streams){});
+client.streams.index(function(err, streams){});
 // streams is an array of javascript objects: [{id: 'stream id', play: {rtmp: 'the rtmp url', hls: 'the hls url'}, publish: {stream: 'the stream name', url: 'the publish url'}, …}, …]
 ```
 
 To get a specific stream:
 
 ```javascript
-stream = client.streams.get('STREAM_ID', function(err, stream){});
+client.streams.get('STREAM_ID', function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', …}
 ```
 
 To create a new stream:
 
 ```javascript
-stream = client.streams.create(function(err, stream){});
+client.streams.create(function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', …}
+```
+
+To fetch the [Flash Media Live Encoder](http://www.adobe.com/products/flash-media-encoder.html) profile for a stream:
+
+```javascript
+client.streams.fmleProfile('STREAM_ID', function(err, profile){});
+// profile is a string of the contents of the Flash Media Live Encoder profile.
 ```
 
 ## Contributing

@@ -41,6 +41,17 @@ class StreamsHandler
       stream = JSON.parse(response.body)
       callback(null, stream)
 
+  # callback(err, profile)
+  fmleProfile: (id, callback)->
+    params = serialize(id: id, secretKey: @config.secretKey, fmleProfile: true)
+    url = "#{BASE_URL}/stream?#{params}"
+    request.get url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      response = JSON.parse(response.body)
+      callback(null, response.content)
+
+  # callback(err, streams)
   index: (callback)->
     params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/streams?#{params}"

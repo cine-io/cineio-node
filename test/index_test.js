@@ -85,6 +85,21 @@ describe('CineIO', function(){
         });
       });
     });
+    describe('fmleProfile', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('get_fmle_profile')
+      });
+
+      it('gets a fmle profile for a stream', function(done){
+        var self = this;
+        self.cine.streams.fmleProfile('THE STREAM ID', function(err, profile){
+          expect(profile).to.include("THE PROFILE")
+
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
+    });
     describe('create', function(){
       beforeEach(function(){
         this.stub = requireFixture('create_stream')
