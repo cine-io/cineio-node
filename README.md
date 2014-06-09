@@ -29,6 +29,13 @@ client.project.get(function(err, project){});
 // project is a simple javascript object: {id: 'project id', name: 'project name', …}
 ```
 
+To delete your project and all associated streams:
+
+```javascript
+client.project.destroy(function(err, project){});
+// project is a simple javascript object that will include deletedAt: {id: 'project id', name: 'project name', deletedAt: 'ISO date' …}
+```
+
 #### Streams
 
 To get all your streams:
@@ -50,6 +57,13 @@ To create a new stream:
 ```javascript
 client.streams.create(function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', …}
+```
+
+To delete a specific new stream:
+
+```javascript
+client.streams.destroy('STREAM_ID', function(err, stream){});
+// stream is a simple javascript object that will include deletedAt: {id: 'stream id', deletedAt: 'ISO Date', …}
 ```
 
 To fetch the [Flash Media Live Encoder](http://www.adobe.com/products/flash-media-encoder.html) profile for a stream:
