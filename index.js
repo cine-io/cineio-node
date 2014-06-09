@@ -41,6 +41,25 @@ ProjectsHandler = (function() {
     });
   };
 
+  ProjectsHandler.prototype.destroy = function(callback) {
+    var params, url;
+    params = serialize({
+      secretKey: this.config.secretKey
+    });
+    url = "" + BASE_URL + "/project?" + params;
+    return request.del(url, function(err, response) {
+      var stream;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      stream = JSON.parse(response.body);
+      return callback(null, stream);
+    });
+  };
+
   return ProjectsHandler;
 
 })();
@@ -124,6 +143,26 @@ StreamsHandler = (function() {
       }
       streams = JSON.parse(response.body);
       return callback(null, streams);
+    });
+  };
+
+  StreamsHandler.prototype.destroy = function(id, callback) {
+    var params, url;
+    params = serialize({
+      id: id,
+      secretKey: this.config.secretKey
+    });
+    url = "" + BASE_URL + "/stream?" + params;
+    return request.del(url, function(err, response) {
+      var stream;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      stream = JSON.parse(response.body);
+      return callback(null, stream);
     });
   };
 

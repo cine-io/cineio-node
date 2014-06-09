@@ -11,6 +11,7 @@ serialize = (obj) ->
 
 class ProjectsHandler
   constructor: (@config)->
+
   get: (callback)->
     params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
@@ -20,8 +21,18 @@ class ProjectsHandler
       stream = JSON.parse(response.body)
       callback(null, stream)
 
+  destroy: (callback)->
+    params = serialize(secretKey: @config.secretKey)
+    url = "#{BASE_URL}/project?#{params}"
+    request.del url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      stream = JSON.parse(response.body)
+      callback(null, stream)
+
 class StreamsHandler
   constructor: (@config)->
+
   # callback(err, stream)
   create: (callback)->
     params = serialize(secretKey: @config.secretKey)
@@ -60,6 +71,16 @@ class StreamsHandler
       return callback(response.body) unless response.statusCode == 200
       streams = JSON.parse(response.body)
       callback(null, streams)
+
+  # callback(err, stream)
+  destroy: (id, callback)->
+    params = serialize(id: id, secretKey: @config.secretKey)
+    url = "#{BASE_URL}/stream?#{params}"
+    request.del url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      stream = JSON.parse(response.body)
+      callback(null, stream)
 
 class CineIO
   constructor: (@config)->

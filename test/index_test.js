@@ -15,6 +15,7 @@ describe('CineIO', function(){
     beforeEach(function(){
       this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
     });
+
     describe('get', function(){
 
       beforeEach(function(){
@@ -36,12 +37,32 @@ describe('CineIO', function(){
         });
       });
     })
+
+    describe('destroy', function(){
+
+      beforeEach(function(){
+        this.stub = requireFixture('delete_project')
+      });
+
+      it('destroys the project', function(done){
+        var self = this;
+        self.cine.project.destroy(function(err, project){
+          expect(project.id).to.equal("THE PROJECT ID")
+          expect(project.deletedAt).to.equal("2014-06-09T20:41:06.619Z")
+
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
+    })
+
   });
 
   describe('streams', function(){
     beforeEach(function(){
       this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
     });
+
     describe('index', function(){
       beforeEach(function(){
         this.stub = requireFixture('get_streams')
@@ -65,6 +86,7 @@ describe('CineIO', function(){
         });
       });
     });
+
     describe('get', function(){
       beforeEach(function(){
         this.stub = requireFixture('get_stream')
@@ -85,6 +107,7 @@ describe('CineIO', function(){
         });
       });
     });
+
     describe('fmleProfile', function(){
       beforeEach(function(){
         this.stub = requireFixture('get_fmle_profile')
@@ -100,6 +123,7 @@ describe('CineIO', function(){
         });
       });
     });
+
     describe('create', function(){
       beforeEach(function(){
         this.stub = requireFixture('create_stream')
@@ -117,9 +141,27 @@ describe('CineIO', function(){
 
           expect(self.stub.isDone()).to.be.true;
           done(err)
+        })
+      })
+    })
+
+    describe('destroy', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('delete_stream')
+      });
+
+      it('destroys a stream', function(done){
+        var self = this;
+        self.cine.streams.destroy('THE STREAM ID', function(err, stream){
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.deletedAt).to.equal('2014-06-09T20:41:06.619Z')
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
         });
       });
-    })
-  });
+    });
 
-});
+
+  })
+
+})
