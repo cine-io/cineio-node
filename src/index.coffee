@@ -18,8 +18,18 @@ class ProjectsHandler
     request.get url, (err, response)->
       return callback(err) if err
       return callback(response.body) unless response.statusCode == 200
-      stream = JSON.parse(response.body)
-      callback(null, stream)
+      project = JSON.parse(response.body)
+      callback(null, project)
+
+  update: (params, callback)->
+    params.secretKey = @config.secretKey
+    params = serialize(params)
+    url = "#{BASE_URL}/project?#{params}"
+    request.put url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      project = JSON.parse(response.body)
+      callback(null, project)
 
   destroy: (callback)->
     params = serialize(secretKey: @config.secretKey)
@@ -27,15 +37,19 @@ class ProjectsHandler
     request.del url, (err, response)->
       return callback(err) if err
       return callback(response.body) unless response.statusCode == 200
-      stream = JSON.parse(response.body)
-      callback(null, stream)
+      project = JSON.parse(response.body)
+      callback(null, project)
 
 class StreamsHandler
   constructor: (@config)->
 
   # callback(err, stream)
-  create: (callback)->
-    params = serialize(secretKey: @config.secretKey)
+  create: (params, callback)->
+    if typeof params == 'function'
+      callback = params
+      params = {}
+    params.secretKey = @config.secretKey
+    params = serialize(params)
     request.post "#{BASE_URL}/stream?#{params}", (err, response)->
       return callback(err) if err
       return callback(response.body) unless response.statusCode == 200
@@ -61,6 +75,17 @@ class StreamsHandler
       return callback(response.body) unless response.statusCode == 200
       response = JSON.parse(response.body)
       callback(null, response.content)
+
+  update: (id, params, callback)->
+    params.secretKey = @config.secretKey
+    params.id = id
+    params = serialize(params)
+    url = "#{BASE_URL}/stream?#{params}"
+    request.put url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      project = JSON.parse(response.body)
+      callback(null, project)
 
   # callback(err, streams)
   index: (callback)->

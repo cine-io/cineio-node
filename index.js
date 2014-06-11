@@ -29,15 +29,33 @@ ProjectsHandler = (function() {
     });
     url = "" + BASE_URL + "/project?" + params;
     return request.get(url, function(err, response) {
-      var stream;
+      var project;
       if (err) {
         return callback(err);
       }
       if (response.statusCode !== 200) {
         return callback(response.body);
       }
-      stream = JSON.parse(response.body);
-      return callback(null, stream);
+      project = JSON.parse(response.body);
+      return callback(null, project);
+    });
+  };
+
+  ProjectsHandler.prototype.update = function(params, callback) {
+    var url;
+    params.secretKey = this.config.secretKey;
+    params = serialize(params);
+    url = "" + BASE_URL + "/project?" + params;
+    return request.put(url, function(err, response) {
+      var project;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      project = JSON.parse(response.body);
+      return callback(null, project);
     });
   };
 
@@ -48,15 +66,15 @@ ProjectsHandler = (function() {
     });
     url = "" + BASE_URL + "/project?" + params;
     return request.del(url, function(err, response) {
-      var stream;
+      var project;
       if (err) {
         return callback(err);
       }
       if (response.statusCode !== 200) {
         return callback(response.body);
       }
-      stream = JSON.parse(response.body);
-      return callback(null, stream);
+      project = JSON.parse(response.body);
+      return callback(null, project);
     });
   };
 
@@ -69,11 +87,13 @@ StreamsHandler = (function() {
     this.config = config;
   }
 
-  StreamsHandler.prototype.create = function(callback) {
-    var params;
-    params = serialize({
-      secretKey: this.config.secretKey
-    });
+  StreamsHandler.prototype.create = function(params, callback) {
+    if (typeof params === 'function') {
+      callback = params;
+      params = {};
+    }
+    params.secretKey = this.config.secretKey;
+    params = serialize(params);
     return request.post("" + BASE_URL + "/stream?" + params, function(err, response) {
       var stream;
       if (err) {
@@ -124,6 +144,25 @@ StreamsHandler = (function() {
       }
       response = JSON.parse(response.body);
       return callback(null, response.content);
+    });
+  };
+
+  StreamsHandler.prototype.update = function(id, params, callback) {
+    var url;
+    params.secretKey = this.config.secretKey;
+    params.id = id;
+    params = serialize(params);
+    url = "" + BASE_URL + "/stream?" + params;
+    return request.put(url, function(err, response) {
+      var project;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      project = JSON.parse(response.body);
+      return callback(null, project);
     });
   };
 

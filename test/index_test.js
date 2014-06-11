@@ -38,6 +38,28 @@ describe('CineIO', function(){
       });
     })
 
+    describe('update', function(){
+
+      beforeEach(function(){
+        this.stub = requireFixture('update_project')
+      });
+
+      it('updates the project', function(done){
+        var self = this;
+        self.cine.project.update({name: 'new project name'}, function(err, project){
+          expect(project.id).to.equal("THE PROJECT ID")
+          expect(project.publicKey).to.equal("THE PROJECT PUBLIC KEY")
+          expect(project.secretKey).to.equal("THE PROJECT SECRET KEY")
+          expect(project.name).to.equal("new project name")
+          expect(project.plan).to.equal("THE PROJECT PLAN")
+          expect(project.streamsCount).to.equal(10)
+
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
+    })
+
     describe('destroy', function(){
 
       beforeEach(function(){
@@ -74,8 +96,7 @@ describe('CineIO', function(){
           expect(streams).to.have.length(1)
           var stream = streams[0]
           expect(stream.id).to.equal("the stream id")
-          expect(stream.id).to.equal("the stream id")
-          expect(stream.name).to.equal("the stream name")
+          expect(stream.streamName).to.equal("the stream name")
           expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
           expect(stream.password).to.equal("the stream password")
           expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
@@ -96,7 +117,7 @@ describe('CineIO', function(){
         var self = this;
         self.cine.streams.get('THE STREAM ID', function(err, stream){
           expect(stream.id).to.equal("the stream id")
-          expect(stream.name).to.equal("the stream name")
+          expect(stream.streamName).to.equal("the stream name")
           expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
           expect(stream.password).to.equal("the stream password")
           expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
@@ -125,19 +146,49 @@ describe('CineIO', function(){
     });
 
     describe('create', function(){
-      beforeEach(function(){
-        this.stub = requireFixture('create_stream')
-      });
 
       it('creates a stream', function(done){
-        var self = this;
-        self.cine.streams.create(function(err, stream){
+        var stub = requireFixture('create_stream')
+        this.cine.streams.create(function(err, stream){
           expect(stream.id).to.equal("the stream id")
-          expect(stream.name).to.equal("the stream name")
+          expect(stream.streamName).to.equal("the stream name")
           expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
           expect(stream.password).to.equal("the stream password")
           expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
           expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+
+          expect(stub.isDone()).to.be.true;
+          done(err)
+        })
+      })
+
+      it('creates a stream with a name', function(done){
+        var stub = requireFixture('create_stream_with_name')
+        this.cine.streams.create({name: 'new stream'}, function(err, stream){
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.name).to.equal("new stream")
+          expect(stream.streamName).to.equal("the stream name")
+          expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
+          expect(stream.password).to.equal("the stream password")
+          expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
+          expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+
+          // expect(stub.isDone()).to.be.true;
+          done(err)
+        })
+      })
+    })
+
+    describe('update', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('update_stream')
+      });
+
+      it('updates a stream', function(done){
+        var self = this;
+        self.cine.streams.update('the stream id', {name: 'new stream name'}, function(err, stream){
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.name).to.equal("new stream name")
 
           expect(self.stub.isDone()).to.be.true;
           done(err)

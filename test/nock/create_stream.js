@@ -2,7 +2,7 @@ var response;
 
 response = {
   id: "the stream id",
-  name: "the stream name",
+  streamName: "the stream name",
   play: {
     hls: "the hls url",
     rtmp: "the rtmp url"

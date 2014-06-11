@@ -1,8 +1,9 @@
 var response;
 
-response = [{
+response = {
   id: "the stream id",
-  streamName: "the stream name",
+  name: "new stream",
+  streamName: 'the stream name',
   play: {
     hls: "the hls url",
     rtmp: "the rtmp url"
@@ -13,8 +14,9 @@ response = [{
   },
   expiration: "2034-05-17T00:00:00.000Z",
   password: "the stream password"
-}];
+};
 
 module.exports = function() {
-  return nock('https://www.cine.io:443').get('/api/1/-/streams?secretKey=MY%20SECRET').reply(200, JSON.stringify(response));
+  var url = '/api/1/-/stream?name=new%20stream&secretKey=MY%20SECRET'
+  return nock('https://www.cine.io:443').post(url).reply(200, JSON.stringify(response));
 };
