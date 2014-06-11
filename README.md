@@ -29,6 +29,15 @@ client.project.get(function(err, project){});
 // project is a simple javascript object: {id: 'project id', name: 'project name', …}
 ```
 
+To update your project attributes:
+
+```javascript
+// params
+//  name: 'a new project name'
+client.project.update(params, function(err, project){});
+// project is a simple javascript object: {id: 'project id', name: 'a new project name', …}
+```
+
 To delete your project and all associated streams:
 
 ```javascript
@@ -57,6 +66,23 @@ To create a new stream:
 ```javascript
 client.streams.create(function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', …}
+```
+
+```javascript
+// can optionally take params
+// params:
+//  name: 'an optional stream name'
+client.streams.create(params, function(err, stream){});
+// stream is a simple javascript object: {id: 'stream id', name: 'an optional stream name', …}
+```
+
+To update a stream:
+
+```javascript
+// params:
+//  name: 'a new stream name'
+client.streams.update(params, function(err, stream){});
+// stream is a simple javascript object: {id: 'stream id', name: 'a new stream name', …}
 ```
 
 To delete a specific new stream:
