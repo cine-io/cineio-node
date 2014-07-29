@@ -66,6 +66,16 @@ class StreamsHandler
       stream = JSON.parse(response.body)
       callback(null, stream)
 
+  # callback(err, streamRecordings)
+  recordings: (id, callback)->
+    params = serialize(id: id, secretKey: @config.secretKey)
+    url = "#{BASE_URL}/stream/recordings?#{params}"
+    request.get url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      streamRecordings = JSON.parse(response.body)
+      callback(null, streamRecordings)
+
   # callback(err, profile)
   fmleProfile: (id, callback)->
     params = serialize(id: id, secretKey: @config.secretKey, fmleProfile: true)

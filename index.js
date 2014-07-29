@@ -127,6 +127,26 @@ StreamsHandler = (function() {
     });
   };
 
+  StreamsHandler.prototype.recordings = function(id, callback) {
+    var params, url;
+    params = serialize({
+      id: id,
+      secretKey: this.config.secretKey
+    });
+    url = "" + BASE_URL + "/stream/recordings?" + params;
+    return request.get(url, function(err, response) {
+      var streamRecordings;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      streamRecordings = JSON.parse(response.body);
+      return callback(null, streamRecordings);
+    });
+  };
+
   StreamsHandler.prototype.fmleProfile = function(id, callback) {
     var params, url;
     params = serialize({
