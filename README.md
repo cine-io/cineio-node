@@ -99,6 +99,23 @@ client.streams.fmleProfile('STREAM_ID', function(err, profile){});
 // profile is a string of the contents of the Flash Media Live Encoder profile.
 ```
 
+#### Stream Recordings
+
+To get all your stream recordings:
+
+```javascript
+client.streams.recordings('STREAM_ID', function(err, streamRecordings){});
+// streamRecordings is an array of javascript objects: [{name: 'stream id', url: 'the playable url', size: size in bytes as integer, date: 'ISO Date of recording'}, …}, …]
+```
+
+
+To delete a specific new stream:
+
+```javascript
+client.streams.recordings.destroy('STREAM_ID', 'RECORDING_NAME', function(err, stream){});
+// streamRecording is a simple javascript object that will include deletedAt: {deletedAt: 'ISO Date'}
+```
+
 ## Contributing
 
 1. Fork it
