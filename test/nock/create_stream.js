@@ -12,7 +12,8 @@ response = {
     stream: "the publish stream"
   },
   expiration: "2034-05-17T00:00:00.000Z",
-  password: "the stream password"
+  password: "the stream password",
+  record: false
 };
 
 module.exports = function() {

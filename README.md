@@ -72,6 +72,7 @@ client.streams.create(function(err, stream){});
 // can optionally take params
 // params:
 //  name: 'an optional stream name'
+//  record: true|false (default false). record: true will save recordings of all streaming sessions
 client.streams.create(params, function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', name: 'an optional stream name', …}
 ```
@@ -81,6 +82,7 @@ To update a stream:
 ```javascript
 // params:
 //  name: 'a new stream name'
+//  record: true|false (updating a stream from true to false will delete old stream recordings)
 client.streams.update(params, function(err, stream){});
 // stream is a simple javascript object: {id: 'stream id', name: 'a new stream name', …}
 ```

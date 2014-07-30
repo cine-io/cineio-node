@@ -151,6 +151,8 @@ describe('CineIO', function(){
         var stub = requireFixture('create_stream')
         this.cine.streams.create(function(err, stream){
           expect(stream.id).to.equal("the stream id")
+          expect(stream.record).to.be.false
+          expect(stream.name).to.be.undefined
           expect(stream.streamName).to.equal("the stream name")
           expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
           expect(stream.password).to.equal("the stream password")
@@ -167,13 +169,31 @@ describe('CineIO', function(){
         this.cine.streams.create({name: 'new stream'}, function(err, stream){
           expect(stream.id).to.equal("the stream id")
           expect(stream.name).to.equal("new stream")
+          expect(stream.record).to.be.false
           expect(stream.streamName).to.equal("the stream name")
           expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
           expect(stream.password).to.equal("the stream password")
           expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
           expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
 
-          // expect(stub.isDone()).to.be.true;
+          expect(stub.isDone()).to.be.true;
+          done(err)
+        })
+      })
+
+      it('creates a stream with record', function(done){
+        var stub = requireFixture('create_stream_with_record')
+        this.cine.streams.create({record: true}, function(err, stream){
+          expect(stream.id).to.equal("the stream id")
+          expect(stream.name).be.undefined
+          expect(stream.record).to.be.true
+          expect(stream.streamName).to.equal("the stream name")
+          expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
+          expect(stream.password).to.equal("the stream password")
+          expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
+          expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+
+          expect(stub.isDone()).to.be.true;
           done(err)
         })
       })
