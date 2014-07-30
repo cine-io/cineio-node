@@ -42,6 +42,7 @@ class ProjectsHandler
 
 class StreamsHandler
   constructor: (@config)->
+    @recordings = new StreamRecordingsHandler(@config)
 
   # callback(err, stream)
   create: (params, callback)->
@@ -65,16 +66,6 @@ class StreamsHandler
       return callback(response.body) unless response.statusCode == 200
       stream = JSON.parse(response.body)
       callback(null, stream)
-
-  # callback(err, streamRecordings)
-  recordings: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey)
-    url = "#{BASE_URL}/stream/recordings?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      streamRecordings = JSON.parse(response.body)
-      callback(null, streamRecordings)
 
   # callback(err, profile)
   fmleProfile: (id, callback)->
@@ -116,6 +107,29 @@ class StreamsHandler
       return callback(response.body) unless response.statusCode == 200
       stream = JSON.parse(response.body)
       callback(null, stream)
+
+class StreamRecordingsHandler
+  constructor: (@config)->
+
+  # callback(err, streamRecordings)
+  index: (id, callback)->
+    params = serialize(id: id, secretKey: @config.secretKey)
+    url = "#{BASE_URL}/stream/recordings?#{params}"
+    request.get url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      streamRecordings = JSON.parse(response.body)
+      callback(null, streamRecordings)
+
+  # callback(err, streamRecording)
+  destroy: (id, recordingName, callback)->
+    params = serialize(id: id, secretKey: @config.secretKey, name: recordingName)
+    url = "#{BASE_URL}/stream/recording?#{params}"
+    request.del url, (err, response)->
+      return callback(err) if err
+      return callback(response.body) unless response.statusCode == 200
+      streamRecording = JSON.parse(response.body)
+      callback(null, streamRecording)
 
 class CineIO
   constructor: (@config)->

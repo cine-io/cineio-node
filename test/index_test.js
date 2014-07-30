@@ -129,28 +129,6 @@ describe('CineIO', function(){
       });
     });
 
-    describe('recordings', function(){
-      beforeEach(function(){
-        this.stub = requireFixture('get_stream_recordings')
-      });
-
-      it('gets the stream recordings', function(done){
-        var self = this;
-        self.cine.streams.recordings('THE STREAM ID', function(err, recordings){
-          expect(recordings).to.have.length(2)
-          var recording = recordings[0]
-          expect(recording.name).to.equal("the recording name")
-          expect(recording.url).to.equal("the recording url")
-          expect(recording.date).to.equal("2034-05-17T00:00:00.000Z")
-          expect(recording.size).to.equal(12345)
-
-          expect(self.stub.isDone()).to.be.true;
-          done(err)
-        });
-      });
-    });
-
-
     describe('fmleProfile', function(){
       beforeEach(function(){
         this.stub = requireFixture('get_fmle_profile')
@@ -234,6 +212,48 @@ describe('CineIO', function(){
       });
     });
 
+  })
+
+  describe('streams.recordings', function(){
+    beforeEach(function(){
+      this.cine = CineIO.init({publicKey: 'my key', secretKey: 'MY SECRET'})
+    });
+
+    describe('index', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('get_stream_recordings')
+      });
+
+      it('gets the stream recordings', function(done){
+        var self = this;
+        self.cine.streams.recordings.index('THE STREAM ID', function(err, recordings){
+          expect(recordings).to.have.length(2)
+          var recording = recordings[0]
+          expect(recording.name).to.equal("the recording name")
+          expect(recording.url).to.equal("the recording url")
+          expect(recording.date).to.equal("2034-05-17T00:00:00.000Z")
+          expect(recording.size).to.equal(12345)
+
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
+    });
+
+    describe('destroy', function(){
+      beforeEach(function(){
+        this.stub = requireFixture('delete_stream_recording')
+      });
+
+      it('deletes a stream recordings', function(done){
+        var self = this;
+        self.cine.streams.recordings.destroy('THE STREAM ID', 'the recording name', function(err, streamRecording){
+          expect(streamRecording.deletedAt).to.equal('2014-06-09T20:42:06.619Z')
+          expect(self.stub.isDone()).to.be.true;
+          done(err)
+        });
+      });
+    });
 
   })
 

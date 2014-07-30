@@ -1,4 +1,4 @@
-var API_VERSION, BASE_URL, CineIO, ProjectsHandler, StreamsHandler, request, serialize;
+var API_VERSION, BASE_URL, CineIO, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, serialize;
 
 request = require('request');
 
@@ -85,6 +85,7 @@ ProjectsHandler = (function() {
 StreamsHandler = (function() {
   function StreamsHandler(config) {
     this.config = config;
+    this.recordings = new StreamRecordingsHandler(this.config);
   }
 
   StreamsHandler.prototype.create = function(params, callback) {
@@ -124,26 +125,6 @@ StreamsHandler = (function() {
       }
       stream = JSON.parse(response.body);
       return callback(null, stream);
-    });
-  };
-
-  StreamsHandler.prototype.recordings = function(id, callback) {
-    var params, url;
-    params = serialize({
-      id: id,
-      secretKey: this.config.secretKey
-    });
-    url = "" + BASE_URL + "/stream/recordings?" + params;
-    return request.get(url, function(err, response) {
-      var streamRecordings;
-      if (err) {
-        return callback(err);
-      }
-      if (response.statusCode !== 200) {
-        return callback(response.body);
-      }
-      streamRecordings = JSON.parse(response.body);
-      return callback(null, streamRecordings);
     });
   };
 
@@ -226,6 +207,56 @@ StreamsHandler = (function() {
   };
 
   return StreamsHandler;
+
+})();
+
+StreamRecordingsHandler = (function() {
+  function StreamRecordingsHandler(config) {
+    this.config = config;
+  }
+
+  StreamRecordingsHandler.prototype.index = function(id, callback) {
+    var params, url;
+    params = serialize({
+      id: id,
+      secretKey: this.config.secretKey
+    });
+    url = "" + BASE_URL + "/stream/recordings?" + params;
+    return request.get(url, function(err, response) {
+      var streamRecordings;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      streamRecordings = JSON.parse(response.body);
+      return callback(null, streamRecordings);
+    });
+  };
+
+  StreamRecordingsHandler.prototype.destroy = function(id, recordingName, callback) {
+    var params, url;
+    params = serialize({
+      id: id,
+      secretKey: this.config.secretKey,
+      name: recordingName
+    });
+    url = "" + BASE_URL + "/stream/recording?" + params;
+    return request.del(url, function(err, response) {
+      var streamRecording;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      streamRecording = JSON.parse(response.body);
+      return callback(null, streamRecording);
+    });
+  };
+
+  return StreamRecordingsHandler;
 
 })();
 
