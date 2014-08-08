@@ -24,7 +24,7 @@ module.exports = (grunt) ->
       test:
         options:
           reporter: 'spec'
-        src: ['test/**/*.js']
+        src: ['test/**/*.coffee']
 
   grunt.loadNpmTasks('grunt-contrib-coffee')
   grunt.loadNpmTasks("grunt-contrib-watch")
