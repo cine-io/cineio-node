@@ -12,7 +12,7 @@ module.exports = (grunt) ->
         tasks: ["coffee"]
 
       test:
-        files: ["test/**/*.js"]
+        files: ["./index.js", "test/**/*.js"]
         tasks: ["mochaTest"]
 
     coffee:
@@ -30,4 +30,4 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks("grunt-contrib-watch")
   grunt.loadNpmTasks('grunt-mocha-test')
 
-  grunt.registerTask('default', 'mochaTest');
+  grunt.registerTask('default', ['coffee', 'mochaTest', 'watch']);

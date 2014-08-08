@@ -9,36 +9,35 @@ serialize = (obj) ->
     str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p])) if obj.hasOwnProperty(p)
   str.join "&"
 
+responseCallback = (callback, key)->
+  return (err, response)->
+    return callback(err) if err
+    return callback(response.body) unless response.statusCode == 200
+    jsonResponse = JSON.parse(response.body)
+    jsonResponse = jsonResponse[key] if key
+    callback(null, jsonResponse)
+
 class ProjectsHandler
   constructor: (@config)->
 
+  # callback(err, project)
   get: (callback)->
     params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      project = JSON.parse(response.body)
-      callback(null, project)
+    request.get url, responseCallback(callback)
 
+  # callback(err, project)
   update: (params, callback)->
     params.secretKey = @config.secretKey
     params = serialize(params)
     url = "#{BASE_URL}/project?#{params}"
-    request.put url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      project = JSON.parse(response.body)
-      callback(null, project)
+    request.put url, responseCallback(callback)
 
+  # callback(err, project)
   destroy: (callback)->
     params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
-    request.del url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      project = JSON.parse(response.body)
-      callback(null, project)
+    request.del url, responseCallback(callback)
 
 class StreamsHandler
   constructor: (@config)->
@@ -51,62 +50,39 @@ class StreamsHandler
       params = {}
     params.secretKey = @config.secretKey
     params = serialize(params)
-    request.post "#{BASE_URL}/stream?#{params}", (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      stream = JSON.parse(response.body)
-      callback(null, stream)
+    request.post "#{BASE_URL}/stream?#{params}", responseCallback(callback)
 
   # callback(err, stream)
   get: (id, callback)->
     params = serialize(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      stream = JSON.parse(response.body)
-      callback(null, stream)
+    request.get url, responseCallback(callback)
 
-  # callback(err, profile)
+  # callback(err, profile (String))
   fmleProfile: (id, callback)->
     params = serialize(id: id, secretKey: @config.secretKey, fmleProfile: true)
     url = "#{BASE_URL}/stream?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      response = JSON.parse(response.body)
-      callback(null, response.content)
+    request.get url, responseCallback(callback, 'content')
 
+  # callback(err, stream)
   update: (id, params, callback)->
     params.secretKey = @config.secretKey
     params.id = id
     params = serialize(params)
     url = "#{BASE_URL}/stream?#{params}"
-    request.put url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      project = JSON.parse(response.body)
-      callback(null, project)
+    request.put url, responseCallback(callback)
 
   # callback(err, streams)
   index: (callback)->
     params = serialize(secretKey: @config.secretKey)
     url = "#{BASE_URL}/streams?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      streams = JSON.parse(response.body)
-      callback(null, streams)
+    request.get url, responseCallback(callback)
 
   # callback(err, stream)
   destroy: (id, callback)->
     params = serialize(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream?#{params}"
-    request.del url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      stream = JSON.parse(response.body)
-      callback(null, stream)
+    request.del url, responseCallback(callback)
 
 class StreamRecordingsHandler
   constructor: (@config)->
@@ -115,21 +91,13 @@ class StreamRecordingsHandler
   index: (id, callback)->
     params = serialize(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream/recordings?#{params}"
-    request.get url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      streamRecordings = JSON.parse(response.body)
-      callback(null, streamRecordings)
+    request.get url, responseCallback(callback)
 
   # callback(err, streamRecording)
   destroy: (id, recordingName, callback)->
     params = serialize(id: id, secretKey: @config.secretKey, name: recordingName)
     url = "#{BASE_URL}/stream/recording?#{params}"
-    request.del url, (err, response)->
-      return callback(err) if err
-      return callback(response.body) unless response.statusCode == 200
-      streamRecording = JSON.parse(response.body)
-      callback(null, streamRecording)
+    request.del url, responseCallback(callback)
 
 class CineIO
   constructor: (@config)->

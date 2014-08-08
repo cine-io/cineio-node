@@ -1,5 +1,5 @@
 (function() {
-  var API_VERSION, BASE_URL, CineIO, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, serialize;
+  var API_VERSION, BASE_URL, CineIO, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, responseCallback, serialize;
 
   request = require('request');
 
@@ -18,6 +18,23 @@
     return str.join("&");
   };
 
+  responseCallback = function(callback, key) {
+    return function(err, response) {
+      var jsonResponse;
+      if (err) {
+        return callback(err);
+      }
+      if (response.statusCode !== 200) {
+        return callback(response.body);
+      }
+      jsonResponse = JSON.parse(response.body);
+      if (key) {
+        jsonResponse = jsonResponse[key];
+      }
+      return callback(null, jsonResponse);
+    };
+  };
+
   ProjectsHandler = (function() {
     function ProjectsHandler(config) {
       this.config = config;
@@ -29,17 +46,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/project?" + params;
-      return request.get(url, function(err, response) {
-        var project;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        project = JSON.parse(response.body);
-        return callback(null, project);
-      });
+      return request.get(url, responseCallback(callback));
     };
 
     ProjectsHandler.prototype.update = function(params, callback) {
@@ -47,17 +54,7 @@
       params.secretKey = this.config.secretKey;
       params = serialize(params);
       url = "" + BASE_URL + "/project?" + params;
-      return request.put(url, function(err, response) {
-        var project;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        project = JSON.parse(response.body);
-        return callback(null, project);
-      });
+      return request.put(url, responseCallback(callback));
     };
 
     ProjectsHandler.prototype.destroy = function(callback) {
@@ -66,17 +63,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/project?" + params;
-      return request.del(url, function(err, response) {
-        var project;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        project = JSON.parse(response.body);
-        return callback(null, project);
-      });
+      return request.del(url, responseCallback(callback));
     };
 
     return ProjectsHandler;
@@ -96,17 +83,7 @@
       }
       params.secretKey = this.config.secretKey;
       params = serialize(params);
-      return request.post("" + BASE_URL + "/stream?" + params, function(err, response) {
-        var stream;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        stream = JSON.parse(response.body);
-        return callback(null, stream);
-      });
+      return request.post("" + BASE_URL + "/stream?" + params, responseCallback(callback));
     };
 
     StreamsHandler.prototype.get = function(id, callback) {
@@ -116,17 +93,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/stream?" + params;
-      return request.get(url, function(err, response) {
-        var stream;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        stream = JSON.parse(response.body);
-        return callback(null, stream);
-      });
+      return request.get(url, responseCallback(callback));
     };
 
     StreamsHandler.prototype.fmleProfile = function(id, callback) {
@@ -137,16 +104,7 @@
         fmleProfile: true
       });
       url = "" + BASE_URL + "/stream?" + params;
-      return request.get(url, function(err, response) {
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        response = JSON.parse(response.body);
-        return callback(null, response.content);
-      });
+      return request.get(url, responseCallback(callback, 'content'));
     };
 
     StreamsHandler.prototype.update = function(id, params, callback) {
@@ -155,17 +113,7 @@
       params.id = id;
       params = serialize(params);
       url = "" + BASE_URL + "/stream?" + params;
-      return request.put(url, function(err, response) {
-        var project;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        project = JSON.parse(response.body);
-        return callback(null, project);
-      });
+      return request.put(url, responseCallback(callback));
     };
 
     StreamsHandler.prototype.index = function(callback) {
@@ -174,17 +122,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/streams?" + params;
-      return request.get(url, function(err, response) {
-        var streams;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        streams = JSON.parse(response.body);
-        return callback(null, streams);
-      });
+      return request.get(url, responseCallback(callback));
     };
 
     StreamsHandler.prototype.destroy = function(id, callback) {
@@ -194,17 +132,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/stream?" + params;
-      return request.del(url, function(err, response) {
-        var stream;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        stream = JSON.parse(response.body);
-        return callback(null, stream);
-      });
+      return request.del(url, responseCallback(callback));
     };
 
     return StreamsHandler;
@@ -223,17 +151,7 @@
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/stream/recordings?" + params;
-      return request.get(url, function(err, response) {
-        var streamRecordings;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        streamRecordings = JSON.parse(response.body);
-        return callback(null, streamRecordings);
-      });
+      return request.get(url, responseCallback(callback));
     };
 
     StreamRecordingsHandler.prototype.destroy = function(id, recordingName, callback) {
@@ -244,17 +162,7 @@
         name: recordingName
       });
       url = "" + BASE_URL + "/stream/recording?" + params;
-      return request.del(url, function(err, response) {
-        var streamRecording;
-        if (err) {
-          return callback(err);
-        }
-        if (response.statusCode !== 200) {
-          return callback(response.body);
-        }
-        streamRecording = JSON.parse(response.body);
-        return callback(null, streamRecording);
-      });
+      return request.del(url, responseCallback(callback));
     };
 
     return StreamRecordingsHandler;
