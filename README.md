@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/cine-io/cineio-node.svg?branch=master)](https://travis-ci.org/cine-io/cineio-node)
 
-The [node package](https://www.npmjs.org/package/cine-io) for [cine.io](cine.io).
+The [node package](https://www.npmjs.org/package/cine-io) for [cine.io](https://cine.io).
 
 ## Installation
 
