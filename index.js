@@ -1,5 +1,5 @@
 (function() {
-  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, requestOptions, responseCallback, serialize;
+  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, ProjectHandler, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, requestOptions, responseCallback, serialize;
 
   request = require('request');
 
@@ -51,7 +51,25 @@
       this.config = config;
     }
 
-    ProjectsHandler.prototype.get = function(callback) {
+    ProjectsHandler.prototype.index = function(callback) {
+      var params, url;
+      params = serialize({
+        masterKey: this.config.masterKey
+      });
+      url = "" + BASE_URL + "/projects?" + params;
+      return request.get(requestOptions(url), responseCallback(callback));
+    };
+
+    return ProjectsHandler;
+
+  })();
+
+  ProjectHandler = (function() {
+    function ProjectHandler(config) {
+      this.config = config;
+    }
+
+    ProjectHandler.prototype.get = function(callback) {
       var params, url;
       params = serialize({
         secretKey: this.config.secretKey
@@ -60,7 +78,7 @@
       return request.get(requestOptions(url), responseCallback(callback));
     };
 
-    ProjectsHandler.prototype.update = function(params, callback) {
+    ProjectHandler.prototype.update = function(params, callback) {
       var url;
       params.secretKey = this.config.secretKey;
       params = serialize(params);
@@ -68,7 +86,7 @@
       return request.put(requestOptions(url), responseCallback(callback));
     };
 
-    ProjectsHandler.prototype.destroy = function(callback) {
+    ProjectHandler.prototype.destroy = function(callback) {
       var params, url;
       params = serialize({
         secretKey: this.config.secretKey
@@ -77,7 +95,7 @@
       return request.del(requestOptions(url), responseCallback(callback));
     };
 
-    return ProjectsHandler;
+    return ProjectHandler;
 
   })();
 
@@ -185,7 +203,8 @@
   CineIO = (function() {
     function CineIO(config) {
       this.config = config;
-      this.project = new ProjectsHandler(this.config);
+      this.projects = new ProjectsHandler(this.config);
+      this.project = new ProjectHandler(this.config);
       this.streams = new StreamsHandler(this.config);
     }
 

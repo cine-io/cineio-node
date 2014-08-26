@@ -26,6 +26,15 @@ requestOptions = (url)->
 class ProjectsHandler
   constructor: (@config)->
 
+  # callback(err, projects)
+  index: (callback)->
+    params = serialize(masterKey: @config.masterKey)
+    url = "#{BASE_URL}/projects?#{params}"
+    request.get requestOptions(url), responseCallback(callback)
+
+class ProjectHandler
+  constructor: (@config)->
+
   # callback(err, project)
   get: (callback)->
     params = serialize(secretKey: @config.secretKey)
@@ -108,7 +117,8 @@ class StreamRecordingsHandler
 
 class CineIO
   constructor: (@config)->
-    @project = new ProjectsHandler(@config)
+    @projects = new ProjectsHandler(@config)
+    @project = new ProjectHandler(@config)
     @streams = new StreamsHandler(@config)
 
 exports.init = (config)->

@@ -16,11 +16,21 @@ npm install --save cine-io
 ```javascript
 CineIO = require('cine-io');
 client = CineIO.init({secretKey: 'my secret'});
+client = CineIO.init({secretKey: 'my secret', masterKey: 'the account master key'}); //needed for fetching all projects
 ```
 
 ### Functions
 
 #### Projects
+
+To get data about your projects:
+
+```javascript
+client.projects.index(function(err, projects){});
+// projects is an array of simple javascript objects: [{id: 'project id', name: 'project name', …}, …]
+```
+
+#### Project
 
 To get data about your project:
 

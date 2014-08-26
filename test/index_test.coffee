@@ -8,6 +8,34 @@ describe 'CineIO', ->
     cine = CineIO.init {publicKey: 'my key', secretKey: 'my secret'}
     expect(cine.config).to.deep.equal {publicKey: 'my key', secretKey: 'my secret'}
 
+  describe 'projects', ->
+    beforeEach ->
+      @cine = CineIO.init {masterKey: 'MY MASTER KEY'}
+
+    describe 'index', ->
+
+      beforeEach ->
+        @stub = requireFixture('get_projects')
+
+      it 'fetches the project', (done)->
+        @cine.projects.index (err, projects)=>
+          expect(projects).to.have.length(2)
+          project = projects[0]
+          project2 = projects[1]
+          expect(project.id).to.equal("THE PROJECT ID")
+          expect(project.publicKey).to.equal("THE PROJECT PUBLIC KEY")
+          expect(project.secretKey).to.equal("THE PROJECT SECRET KEY")
+          expect(project.name).to.equal("THE PROJECT NAME")
+          expect(project.streamsCount).to.equal(10)
+          expect(project2.id).to.equal("THE SECOND PROJECT ID")
+          expect(project2.publicKey).to.equal("THE SECOND PROJECT PUBLIC KEY")
+          expect(project2.secretKey).to.equal("THE SECOND PROJECT SECRET KEY")
+          expect(project2.name).to.equal("THE SECOND PROJECT NAME")
+          expect(project2.streamsCount).to.equal(10)
+
+          expect(@stub.isDone()).to.be.true
+          done(err)
+
   describe 'project', ->
     beforeEach ->
       @cine = CineIO.init {publicKey: 'my key', secretKey: 'MY SECRET'}
