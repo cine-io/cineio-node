@@ -61,6 +61,7 @@ To get all your streams:
 
 ```javascript
 client.streams.index(function(err, streams){});
+client.streams.index({name: 'my custom name'}, function(err, streams){});
 // streams is an array of javascript objects: [{id: 'stream id', play: {rtmp: 'the rtmp url', hls: 'the hls url'}, publish: {stream: 'the stream name', url: 'the publish url'}, …}, …]
 ```
 
