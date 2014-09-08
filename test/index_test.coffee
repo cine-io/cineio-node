@@ -93,22 +93,41 @@ describe 'CineIO', ->
       @cine = CineIO.init {publicKey: 'my key', secretKey: 'MY SECRET'}
 
     describe 'index', ->
-      beforeEach ->
-        @stub = requireFixture('get_streams')
+      describe 'without params', ->
+        beforeEach ->
+          @stub = requireFixture('get_streams')
 
-      it 'gets the streams', (done)->
-        @cine.streams.index (err, streams)=>
-          expect(streams).to.have.length(1)
-          stream = streams[0]
-          expect(stream.id).to.equal("the stream id")
-          expect(stream.streamName).to.equal("the stream name")
-          expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
-          expect(stream.password).to.equal("the stream password")
-          expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
-          expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+        it 'gets the streams', (done)->
+          @cine.streams.index (err, streams)=>
+            expect(streams).to.have.length(1)
+            stream = streams[0]
+            expect(stream.id).to.equal("the stream id")
+            expect(stream.streamName).to.equal("the stream name")
+            expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
+            expect(stream.password).to.equal("the stream password")
+            expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
+            expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
 
-          expect(@stub.isDone()).to.be.true
-          done(err)
+            expect(@stub.isDone()).to.be.true
+            done(err)
+
+      describe 'with name', ->
+        beforeEach ->
+          @stub = requireFixture('get_streams_with_name')
+
+        it 'gets the streams', (done)->
+          @cine.streams.index name: 'my name', (err, streams)=>
+            expect(streams).to.have.length(1)
+            stream = streams[0]
+            expect(stream.id).to.equal("the stream id")
+            expect(stream.streamName).to.equal("the stream name")
+            expect(stream.expiration).to.equal("2034-05-17T00:00:00.000Z")
+            expect(stream.password).to.equal("the stream password")
+            expect(stream.play).to.deep.equal({hls: "the hls url", rtmp: "the rtmp url"})
+            expect(stream.publish).to.deep.equal({url: "the publish url", stream: "the publish stream"})
+
+            expect(@stub.isDone()).to.be.true
+            done(err)
 
     describe 'get', ->
       beforeEach ->

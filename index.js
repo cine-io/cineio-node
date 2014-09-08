@@ -147,11 +147,14 @@
       return request.put(requestOptions(url), responseCallback(callback));
     };
 
-    StreamsHandler.prototype.index = function(callback) {
-      var params, url;
-      params = serialize({
-        secretKey: this.config.secretKey
-      });
+    StreamsHandler.prototype.index = function(params, callback) {
+      var url;
+      if (typeof params === 'function') {
+        callback = params;
+        params = {};
+      }
+      params.secretKey = this.config.secretKey;
+      params = serialize(params);
       url = "" + BASE_URL + "/streams?" + params;
       return request.get(requestOptions(url), responseCallback(callback));
     };

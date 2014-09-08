@@ -89,8 +89,12 @@ class StreamsHandler
     request.put requestOptions(url), responseCallback(callback)
 
   # callback(err, streams)
-  index: (callback)->
-    params = serialize(secretKey: @config.secretKey)
+  index: (params, callback)->
+    if typeof params == 'function'
+      callback = params
+      params = {}
+    params.secretKey = @config.secretKey
+    params = serialize(params)
     url = "#{BASE_URL}/streams?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
