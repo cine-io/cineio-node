@@ -1,5 +1,7 @@
 (function() {
-  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, ProjectHandler, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, request, requestOptions, responseCallback, serialize;
+  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, Peer, ProjectHandler, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, crypto, request, requestOptions, responseCallback, serialize;
+
+  crypto = require('crypto');
 
   request = require('request');
 
@@ -203,12 +205,44 @@
 
   })();
 
+  Peer = (function() {
+    var generateSignature;
+
+    function Peer(config) {
+      this.config = config;
+    }
+
+    generateSignature = function(identity, timestamp, secretKey) {
+      var shasum, signatureToSha;
+      shasum = crypto.createHash('sha1');
+      signatureToSha = "identity=" + identity + "&timestamp=" + timestamp + secretKey;
+      shasum.update(signatureToSha);
+      return shasum.digest('hex');
+    };
+
+    Peer.prototype.generateIdentitySignature = function(identity) {
+      var response, signature, timestamp;
+      timestamp = Math.floor(Date.now() / 1000);
+      signature = generateSignature(identity, timestamp, this.config.secretKey);
+      response = {
+        timestamp: timestamp,
+        signature: signature,
+        identity: identity
+      };
+      return response;
+    };
+
+    return Peer;
+
+  })();
+
   CineIO = (function() {
     function CineIO(config) {
       this.config = config;
       this.projects = new ProjectsHandler(this.config);
       this.project = new ProjectHandler(this.config);
       this.streams = new StreamsHandler(this.config);
+      this.peer = new Peer(this.config);
     }
 
     return CineIO;

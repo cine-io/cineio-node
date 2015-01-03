@@ -88,6 +88,17 @@ describe 'CineIO', ->
           done(err)
 
 
+  describe 'peer', ->
+    describe 'generateIdentitySignature', ->
+      beforeEach ->
+        @cine = CineIO.init {publicKey: 'my key', secretKey: 'MY SECRET'}
+
+      it 'generates the correct signature', ->
+        dateSpy = sinon.stub(Date, 'now').returns(82828282)
+        result = @cine.peer.generateIdentitySignature("Thomas")
+        expect(result).to.deep.equal({identity: "Thomas", signature: "babd8037923b2c31d68a97da3d13aa783c87e033", timestamp: 82828})
+        dateSpy.restore()
+
   describe 'streams', ->
     beforeEach ->
       @cine = CineIO.init {publicKey: 'my key', secretKey: 'MY SECRET'}
@@ -225,7 +236,6 @@ describe 'CineIO', ->
           expect(stream.deletedAt).to.equal('2014-06-09T20:41:06.619Z')
           expect(@stub.isDone()).to.be.true
           done(err)
-
 
   describe 'streams.recordings', ->
     beforeEach ->

@@ -1,3 +1,4 @@
+crypto = require('crypto')
 request = require('request')
 API_VERSION = 1
 BASE_URL = "https://www.cine.io/api/#{API_VERSION}/-"
@@ -119,11 +120,31 @@ class StreamRecordingsHandler
     url = "#{BASE_URL}/stream/recording?#{params}"
     request.del requestOptions(url), responseCallback(callback)
 
+
+class Peer
+  constructor: (@config)->
+  generateSignature = (identity, timestamp, secretKey)->
+    shasum = crypto.createHash('sha1')
+
+    signatureToSha = "identity=#{identity}&timestamp=#{timestamp}#{secretKey}"
+    shasum.update(signatureToSha)
+    shasum.digest('hex')
+
+  generateIdentitySignature: (identity)->
+    timestamp = Math.floor(Date.now() / 1000)
+    signature = generateSignature(identity, timestamp, @config.secretKey)
+    response =
+      timestamp:  timestamp
+      signature: signature
+      identity: identity
+    return response
+
 class CineIO
   constructor: (@config)->
     @projects = new ProjectsHandler(@config)
     @project = new ProjectHandler(@config)
     @streams = new StreamsHandler(@config)
+    @peer = new Peer(@config)
 
 exports.init = (config)->
   new CineIO(config)
