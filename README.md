@@ -135,7 +135,7 @@ client.streams.recordings.destroy('STREAM_ID', 'RECORDING_NAME', function(err, s
 ```javascript
 var identity = "Unique user name to your app";
 response = client.peer.generateIdentitySignature(identity);
-// response looks like {signature: "md5-hash", timestamp: 1420258111, identity: "Unique user name to your app"}
+// response looks like {signature: "sha1-hash", timestamp: 1420258111, identity: "Unique user name to your app"}
 ```
 
 ## Contributing
