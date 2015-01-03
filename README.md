@@ -121,12 +121,21 @@ client.streams.recordings('STREAM_ID', function(err, streamRecordings){});
 // streamRecordings is an array of javascript objects: [{name: 'stream id', url: 'the playable url', size: size in bytes as integer, date: 'ISO Date of recording'}, …}, …]
 ```
 
-
 To delete a specific new stream:
 
 ```javascript
 client.streams.recordings.destroy('STREAM_ID', 'RECORDING_NAME', function(err, stream){});
 // streamRecording is a simple javascript object that will include deletedAt: {deletedAt: 'ISO Date'}
+```
+
+### Peer
+
+#### Identity Signature Generation
+
+```javascript
+var identity = "Unique user name to your app"
+response = client.peer.generateIdentitySignature(identity)
+// response looks like {signature: "md5-hash", timestamp: 1420258111, identity: "Unique user name to your app"}
 ```
 
 ## Contributing
