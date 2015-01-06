@@ -87,7 +87,6 @@ describe 'CineIO', ->
           expect(@stub.isDone()).to.be.true
           done(err)
 
-
   describe 'peer', ->
     describe 'generateIdentitySignature', ->
       beforeEach ->
@@ -264,5 +263,42 @@ describe 'CineIO', ->
       it 'deletes a stream recordings', (done)->
         @cine.streams.recordings.destroy 'THE STREAM ID', 'the recording name', (err, streamRecording)=>
           expect(streamRecording.deletedAt).to.equal('2014-06-09T20:42:06.619Z')
+          expect(@stub.isDone()).to.be.true
+          done(err)
+
+  describe 'usage', ->
+    beforeEach ->
+      @cine = CineIO.init {publicKey: 'my key', secretKey: 'THE PROJECT SECRET KEY'}
+
+    describe 'project', ->
+      beforeEach ->
+        @stub = requireFixture('usage_project')
+
+      it 'returns the project usage report', (done)->
+        options =
+          month: new Date("January 06 2015")
+          report: ['bandwidth', 'storage']
+        @cine.usage.project options, (err, result)=>
+          expect(result.secretKey).to.equal('THE PROJECT SECRET KEY')
+          expect(result.bandwidth).to.equal(1073741824)
+          expect(result.storage).to.equal(2147483648)
+          expect(result.month).to.equal(options.month.toISOString())
+          expect(@stub.isDone()).to.be.true
+          done(err)
+
+    describe 'stream', ->
+      beforeEach ->
+        @stub = requireFixture('usage_stream')
+
+      it 'returns the stream usage report', (done)->
+        options =
+          month: new Date("January 06 2015")
+          report: ['bandwidth', 'storage']
+        @cine.usage.stream "THE STREAM ID", options, (err, result)=>
+          expect(result.id).to.equal('THE STREAM ID')
+          expect(result.secretKey).to.equal('THE PROJECT SECRET KEY')
+          expect(result.bandwidth).to.equal(1073741824)
+          expect(result.storage).to.equal(2147483648)
+          expect(result.month).to.equal(options.month.toISOString())
           expect(@stub.isDone()).to.be.true
           done(err)

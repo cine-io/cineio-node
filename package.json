@@ -11,6 +11,7 @@
   },
   "repository": "https://github.com/cine-io/cineio-node",
   "dependencies": {
+    "qs": "^2.3.3",
     "request": "^2.36.0"
   },
   "devDependencies": {

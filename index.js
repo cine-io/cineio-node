@@ -1,26 +1,17 @@
 (function() {
-  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, Peer, ProjectHandler, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, crypto, request, requestOptions, responseCallback, serialize;
+  var API_VERSION, BASE_URL, CURRENT_VERSION, CineIO, Peer, ProjectHandler, ProjectsHandler, StreamRecordingsHandler, StreamsHandler, UsageHandler, crypto, qs, request, requestOptions, responseCallback;
 
   crypto = require('crypto');
 
   request = require('request');
+
+  qs = require('qs');
 
   API_VERSION = 1;
 
   BASE_URL = "https://www.cine.io/api/" + API_VERSION + "/-";
 
   CURRENT_VERSION = require('./package.json').version;
-
-  serialize = function(obj) {
-    var p, str;
-    str = [];
-    for (p in obj) {
-      if (obj.hasOwnProperty(p)) {
-        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-      }
-    }
-    return str.join("&");
-  };
 
   responseCallback = function(callback, key) {
     return function(err, response) {
@@ -55,7 +46,7 @@
 
     ProjectsHandler.prototype.index = function(callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         masterKey: this.config.masterKey
       });
       url = "" + BASE_URL + "/projects?" + params;
@@ -73,7 +64,7 @@
 
     ProjectHandler.prototype.get = function(callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/project?" + params;
@@ -83,14 +74,14 @@
     ProjectHandler.prototype.update = function(params, callback) {
       var url;
       params.secretKey = this.config.secretKey;
-      params = serialize(params);
+      params = qs.stringify(params);
       url = "" + BASE_URL + "/project?" + params;
       return request.put(requestOptions(url), responseCallback(callback));
     };
 
     ProjectHandler.prototype.destroy = function(callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         secretKey: this.config.secretKey
       });
       url = "" + BASE_URL + "/project?" + params;
@@ -114,14 +105,14 @@
         params = {};
       }
       params.secretKey = this.config.secretKey;
-      params = serialize(params);
+      params = qs.stringify(params);
       url = "" + BASE_URL + "/stream?" + params;
       return request.post(requestOptions(url), responseCallback(callback));
     };
 
     StreamsHandler.prototype.get = function(id, callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         id: id,
         secretKey: this.config.secretKey
       });
@@ -131,7 +122,7 @@
 
     StreamsHandler.prototype.fmleProfile = function(id, callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         id: id,
         secretKey: this.config.secretKey,
         fmleProfile: true
@@ -144,7 +135,7 @@
       var url;
       params.secretKey = this.config.secretKey;
       params.id = id;
-      params = serialize(params);
+      params = qs.stringify(params);
       url = "" + BASE_URL + "/stream?" + params;
       return request.put(requestOptions(url), responseCallback(callback));
     };
@@ -156,14 +147,14 @@
         params = {};
       }
       params.secretKey = this.config.secretKey;
-      params = serialize(params);
+      params = qs.stringify(params);
       url = "" + BASE_URL + "/streams?" + params;
       return request.get(requestOptions(url), responseCallback(callback));
     };
 
     StreamsHandler.prototype.destroy = function(id, callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         id: id,
         secretKey: this.config.secretKey
       });
@@ -182,7 +173,7 @@
 
     StreamRecordingsHandler.prototype.index = function(id, callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         id: id,
         secretKey: this.config.secretKey
       });
@@ -192,7 +183,7 @@
 
     StreamRecordingsHandler.prototype.destroy = function(id, recordingName, callback) {
       var params, url;
-      params = serialize({
+      params = qs.stringify({
         id: id,
         secretKey: this.config.secretKey,
         name: recordingName
@@ -202,6 +193,38 @@
     };
 
     return StreamRecordingsHandler;
+
+  })();
+
+  UsageHandler = (function() {
+    function UsageHandler(config) {
+      this.config = config;
+    }
+
+    UsageHandler.prototype.project = function(options, callback) {
+      var params, url;
+      params = qs.stringify({
+        month: options.month.toISOString(),
+        report: options.report,
+        secretKey: this.config.secretKey
+      });
+      url = "" + BASE_URL + "/usage/project?" + params;
+      return request.get(requestOptions(url), responseCallback(callback));
+    };
+
+    UsageHandler.prototype.stream = function(id, options, callback) {
+      var params, url;
+      params = qs.stringify({
+        month: options.month.toISOString(),
+        report: options.report,
+        secretKey: this.config.secretKey,
+        id: id
+      });
+      url = "" + BASE_URL + "/usage/stream?" + params;
+      return request.get(requestOptions(url), responseCallback(callback));
+    };
+
+    return UsageHandler;
 
   })();
 
@@ -242,6 +265,7 @@
       this.projects = new ProjectsHandler(this.config);
       this.project = new ProjectHandler(this.config);
       this.streams = new StreamsHandler(this.config);
+      this.usage = new UsageHandler(this.config);
       this.peer = new Peer(this.config);
     }
 

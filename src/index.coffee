@@ -1,15 +1,9 @@
 crypto = require('crypto')
 request = require('request')
+qs = require('qs')
 API_VERSION = 1
 BASE_URL = "https://www.cine.io/api/#{API_VERSION}/-"
 CURRENT_VERSION = require('./package.json').version
-
-# http://stackoverflow.com/questions/1714786/querystring-encoding-of-a-javascript-object
-serialize = (obj) ->
-  str = []
-  for p of obj
-    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p])) if obj.hasOwnProperty(p)
-  str.join "&"
 
 responseCallback = (callback, key)->
   return (err, response)->
@@ -29,7 +23,7 @@ class ProjectsHandler
 
   # callback(err, projects)
   index: (callback)->
-    params = serialize(masterKey: @config.masterKey)
+    params = qs.stringify(masterKey: @config.masterKey)
     url = "#{BASE_URL}/projects?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
@@ -38,20 +32,20 @@ class ProjectHandler
 
   # callback(err, project)
   get: (callback)->
-    params = serialize(secretKey: @config.secretKey)
+    params = qs.stringify(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
   # callback(err, project)
   update: (params, callback)->
     params.secretKey = @config.secretKey
-    params = serialize(params)
+    params = qs.stringify(params)
     url = "#{BASE_URL}/project?#{params}"
     request.put requestOptions(url), responseCallback(callback)
 
   # callback(err, project)
   destroy: (callback)->
-    params = serialize(secretKey: @config.secretKey)
+    params = qs.stringify(secretKey: @config.secretKey)
     url = "#{BASE_URL}/project?#{params}"
     request.del requestOptions(url), responseCallback(callback)
 
@@ -65,19 +59,19 @@ class StreamsHandler
       callback = params
       params = {}
     params.secretKey = @config.secretKey
-    params = serialize(params)
+    params = qs.stringify(params)
     url = "#{BASE_URL}/stream?#{params}"
     request.post requestOptions(url), responseCallback(callback)
 
   # callback(err, stream)
   get: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey)
+    params = qs.stringify(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
   # callback(err, profile (String))
   fmleProfile: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey, fmleProfile: true)
+    params = qs.stringify(id: id, secretKey: @config.secretKey, fmleProfile: true)
     url = "#{BASE_URL}/stream?#{params}"
     request.get requestOptions(url), responseCallback(callback, 'content')
 
@@ -85,7 +79,7 @@ class StreamsHandler
   update: (id, params, callback)->
     params.secretKey = @config.secretKey
     params.id = id
-    params = serialize(params)
+    params = qs.stringify(params)
     url = "#{BASE_URL}/stream?#{params}"
     request.put requestOptions(url), responseCallback(callback)
 
@@ -95,13 +89,13 @@ class StreamsHandler
       callback = params
       params = {}
     params.secretKey = @config.secretKey
-    params = serialize(params)
+    params = qs.stringify(params)
     url = "#{BASE_URL}/streams?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
   # callback(err, stream)
   destroy: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey)
+    params = qs.stringify(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream?#{params}"
     request.del requestOptions(url), responseCallback(callback)
 
@@ -110,16 +104,38 @@ class StreamRecordingsHandler
 
   # callback(err, streamRecordings)
   index: (id, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey)
+    params = qs.stringify(id: id, secretKey: @config.secretKey)
     url = "#{BASE_URL}/stream/recordings?#{params}"
     request.get requestOptions(url), responseCallback(callback)
 
   # callback(err, streamRecording)
   destroy: (id, recordingName, callback)->
-    params = serialize(id: id, secretKey: @config.secretKey, name: recordingName)
+    params = qs.stringify(id: id, secretKey: @config.secretKey, name: recordingName)
     url = "#{BASE_URL}/stream/recording?#{params}"
     request.del requestOptions(url), responseCallback(callback)
 
+class UsageHandler
+  constructor: (@config)->
+
+  # callback(err, usageReport)
+  project: (options, callback)->
+    params = qs.stringify
+      month: options.month.toISOString()
+      report: options.report
+      secretKey: @config.secretKey
+
+    url = "#{BASE_URL}/usage/project?#{params}"
+    request.get requestOptions(url), responseCallback(callback)
+
+  # callback(err, usageReport)
+  stream: (id, options, callback)->
+    params = qs.stringify
+      month: options.month.toISOString()
+      report: options.report
+      secretKey: @config.secretKey
+      id: id
+    url = "#{BASE_URL}/usage/stream?#{params}"
+    request.get requestOptions(url), responseCallback(callback)
 
 class Peer
   constructor: (@config)->
@@ -144,6 +160,7 @@ class CineIO
     @projects = new ProjectsHandler(@config)
     @project = new ProjectHandler(@config)
     @streams = new StreamsHandler(@config)
+    @usage = new UsageHandler(@config)
     @peer = new Peer(@config)
 
 exports.init = (config)->
