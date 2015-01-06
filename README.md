@@ -146,7 +146,7 @@ Use these api endpoints to fetch the monthly usage for a project or a stream.
 
 ```javascript
 var options = {month: new Date, report: ['bandwidth, 'peer']};
-response = client.usage.project(options, function(err, response){});
+client.usage.project(options, function(err, response){});
 // response looks like {bandwidth: 12345, storage: 54321, month: "month (ISO 8601 format)", secretKey: "YOUR SECRET KEY"}
 // bandwidth and storage are represented in bytes
 ```
@@ -156,7 +156,7 @@ response = client.usage.project(options, function(err, response){});
 ```javascript
 var id = 'STREAM_ID';
 var options = {month: new Date, report: ['bandwidth, 'peer']};
-response = client.usage.stream(id, options, function(err, response){});
+client.usage.stream(id, options, function(err, response){});
 // response looks like {bandwidth: 12345, storage: 54321, month: "month (ISO 8601 format)", secretKey: "YOUR SECRET KEY", id: "STREAM_ID"}
 // bandwidth and storage are represented in bytes
 ```
