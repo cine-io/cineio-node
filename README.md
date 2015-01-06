@@ -138,6 +138,29 @@ response = client.peer.generateIdentitySignature(identity);
 // response looks like {signature: "sha1-hash", timestamp: 1420258111, identity: "Unique user name to your app"}
 ```
 
+### Usage
+
+Use these api endpoints to fetch the monthly usage for a project or a stream.
+
+#### Project Usage
+
+```javascript
+var options = {month: new Date, report: ['bandwidth, 'peer']};
+response = client.usage.project(options, function(err, response){});
+// response looks like {bandwidth: 12345, storage: 54321, month: "month (ISO 8601 format)", secretKey: "YOUR SECRET KEY"}
+// bandwidth and storage are represented in bytes
+```
+
+#### Stream Usage
+
+```javascript
+var id = 'STREAM_ID';
+var options = {month: new Date, report: ['bandwidth, 'peer']};
+response = client.usage.stream(id, options, function(err, response){});
+// response looks like {bandwidth: 12345, storage: 54321, month: "month (ISO 8601 format)", secretKey: "YOUR SECRET KEY", id: "STREAM_ID"}
+// bandwidth and storage are represented in bytes
+```
+
 ## Contributing
 
 1. Fork it
